@@ -10,6 +10,6 @@
 
 ## What About Relativity's Reach?
 * I stopped development on Constellation in October 2014 and left it up on my Group's site, [admixcollective.org/constellation.html](admixcollective.org/constellation.html).
-* In August 2015 [The Office for Creative Research (OCR)](http://o-c-r.org/) released [Relativity's Reach](http://www.scientificamerican.com/sciam/assets/media/multimedia/0815-relativity/index.html).
+* In August 2015 [The Office for Creative Research (OCR)](http://o-c-r.org/) released [Relativity's Reach](http://www.scientificamerican.com/sciam/assets/media/multimedia/0815-relativity/index.html) with [Scientific American](http://www.scientificamerican.com/article/relativity-infographic/).
 * Their awesome interactive visualization was created to commemorate the 100 year anniversary of Albert Einstein's Theory of General Relativity.
 * While Constellation is dwarfed by their project in scope and depth, it does have it's charms and I will continue working on it.
