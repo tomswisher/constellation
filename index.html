@@ -15,13 +15,12 @@
 // ----------------------------------------------------------------------------
 // Settings
 // ----------------------------------------------------------------------------
-
-var g = Initialize();
+var g = InitializeG();
 UpdateDurations();
 g['debuglayout']       = false;
 g['debugforce']        = true;
 g['debuganimation']    = false;
-g['debugskipintro']    = false;
+g['debugskipintro']    = true;
 
 // ----------------------------------------------------------------------------
 // D3.js and DOM declarations
@@ -270,177 +269,19 @@ if (g['debugforce']===true) {
 if (g['debuglayout']===true) {
 	DebugLayout();
 }
+// ----------------------------------------
 
-function DrawSplashScreens() {
-	var numlines = 6;
-	var temptext = d3.range(numlines);
-	var tempx = d3.range(numlines);
-	var tempy = d3.range(numlines);
-	var shiftx = 4.5;
-	var splashtextdata = [
-		{ 	'text':'Circles are scientific articles',
-			'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-1.5)
-		},
-		{ 	'text':'Lines are citations/references',
-			'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-2.5)
-		},
-		// { 	'text':'Mouseover a paper to select it and click to toggle its menu',
-		// 	'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-3)
-		// },
-		{ 	'text':'Activate menu options',
-			'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-5)
-		},
-		// { 	'text':'You can also click here',
-		// 	'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-4.75)
-		// },
-		// { 	'text':'to access menu options',
-		// 	'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-5.25)
-		// },
-		{ 	'text':'Pick Y Axis perspective',
-			'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-8)
-		},
-		// { 	'text':'Click here to change the',
-		// 	'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-7.75)
-		// },
-		// { 	'text':'perspective on the Y Axis',
-		// 	'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-8.25)
-		// },
-		{ 	'text':'Pick X Axis perspective',
-			'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-10.5)
-		}
-		// { 	'text':'Click here to change the',
-		// 	'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-10.25)
-		// },
-		// { 	'text':'perspective on the X Axis',
-		// 	'x':LayoutX(shiftx + 0),	'y':LayoutY(g['hnum']-10.75)
-		// }
-	];
-	var splashrectsdata = [
-		{ 	'x':LayoutX(-0.75),	'y':LayoutY(g['hnum']-3.25), 'rx':30, 'ry':30,
-			'width':3.5*g['unitsquare'], 'height':3.5*g['unitsquare']
-		},
-		{ 	'x':LayoutX(-0.75),	'y':LayoutY(g['hnum']-6.75), 'rx':30, 'ry':30,
-			'width':3.5*g['unitsquare'], 'height':2.5*g['unitsquare']
-		},
-		{ 	'x':LayoutX(-0.75),	'y':LayoutY(g['hnum']-9.25), 'rx':30, 'ry':30,
-			'width':3.5*g['unitsquare'], 'height':2.5*g['unitsquare']
-		},
-		{ 	'x':LayoutX(2.75),	'y':LayoutY(g['hnum']-5), 'rx':0, 'ry':0,
-			'width':1.5*g['unitsquare'], 'height':0.5
-		},
-		{ 	'x':LayoutX(2.75),	'y':LayoutY(g['hnum']-8), 'rx':0, 'ry':0,
-			'width':1.5*g['unitsquare'], 'height':0.5
-		},
-		{ 	'x':LayoutX(2.75),	'y':LayoutY(g['hnum']-10.5), 'rx':0, 'ry':0,
-			'width':1.5*g['unitsquare'], 'height':0.5
-		}
-	];
-	// SPLASH SCREEN
-	// sides.append('g')
-	// 	.classed('splash', true)
-	// 	.style('opacity', 1)
-	// 	.append('rect')
-	// 	.classed('splashbg coverhelp', true)
-	// 	.attr('x', 2)
-	// 	.attr('y', g['stageheight']-g['iconsize']-2)
-	// 	.attr('width', g['stagewidth'])
-	// 	.attr('height', g['iconsize']);
-	// sides.append('g')
-	// 	.classed('splash coverarxiv', true)
-	// 	.style('opacity', 1)
-	// 	.append('rect')
-	// 	.classed('splashbg', true)
-	// 	.attr('x', 2)
-	// 	.attr('y', 0)
-	// 	.attr('width', g['stagewidth']-(0.5)*g['iconsize'])
-	// 	.attr('height', g['iconsize']);
-	// sides.append('g')
-	// 	.classed('splash', true)
-	// 	.style('opacity', 1)
-	// 	.append('rect')
-	// 	.classed('splashbg', true)
-	// 	.attr('x', 0)
-	// 	.attr('y', 0)
-	// 	.attr('width', g['stagewidth'])
-	// 	.attr('height', g['stageheight']);
-	sides.selectAll('.splashtext')
-		.data(splashtextdata).enter()
-		.append('g')
-		.classed('splash splashfade', true)
-		.append('text')
-		.classed('splashtext', true)
-		.attr('x', function(d) { return d.x; })
-		.attr('y', function(d) { return d.y; })
-		.text(function(d) { return d.text; });
-	sides.selectAll('.splashrects')
-		.data(splashrectsdata).enter()
-		.append('g')
-		.classed('splash splashfade', true)
-		.append('rect')
-		.classed('splashrects', true)
-		.attr('rx', function(d) { return d.rx; })
-		.attr('ry', function(d) { return d.ry; })
-		.attr('x', function(d) { return d.x; })
-		.attr('y', function(d) { return d.y; })
-		.attr('width', function(d) { return d.width; })
-		.attr('height', function(d) { return d.height; });
-	sides.append('g')
-		.classed('splash splashfade', true)
-		.append('rect')
-		.classed('splashclick', true)
-		.attr('x', -g['sidesleft'])
-		.attr('y', -g['sidestop'])
-		.attr('width', g['svgwidth'])
-		.attr('height', g['svgheight'])
-		.on('mousedown', function() {
-			if (g['vamptime']===0 && g['introfinished']===true) {
-				// TransitionVamp(g['duration']).each('end', function() {
-					// ToggleExaminer();
-				// });
-				// Vamp(g['duration']);
-				d3.selectAll('.splash')
-					.style('pointer-events', 'none')
-					.transition()
-					.ease(g['easeflipin'])
-					.duration(g['duration'])
-					.style('opacity', 0)
-					.call(EndAll, function() {
-						d3.selectAll('.splash').remove();
-					});
-			}
-		});
-	// d3.selectAll('.splashfade').transition()
-	// 	.delay(g['duration'])
-	// 	.ease(g['easeflipin'])
-	// 	.duration(g['duration'])
-	// 	.style('opacity', 1);
-}
+var vampclock = [];
+var transitionvampclock = [];
+var vamprect = [];
+
+window.onload = InitializePage;
+
+// ----------------------------------------------------------------------------
+// Function declarations
+// ----------------------------------------------------------------------------
 
 function DrawLoadingScreen() {
-	// LOADING
-	// sides.append('g')
-	// 	.classed('loading', true)
-	// 	.append('rect')
-	// 	.classed('loadingrect', true)
-	// 	.attr('x', -g['axessize']-g['axesbarsize'])
-	// 	.attr('y', -g['sidestop'])
-	// 	.attr('width', g['axessize']+g['stagewidth']+2*g['axesbarsize'])
-	// 	.attr('height', g['svgheight']);
-	// sides.append('g')
-	// 	.append('rect')
-	// 	.classed('loadingrect', true)
-	// 	.attr('x', -g['axessize']-g['axesbarsize'])
-	// 	.attr('y', -g['sidestop'])
-	// 	.attr('width', g['axessize']+g['stagewidth']+2*g['axesbarsize'])
-	// 	.attr('height', g['svgheight'])
-	// 	.transition()
-	// 		.delay(g['duration'])
-	// 		.ease(g['easeflipin'])
-	// 		.duration(g['duration'])
-	// 		.style('opacity', 0)
-	// 		.call(EndAll, function() {
-	// 			d3.selectAll('.loadingrect').remove();
-	// 		});
 	sides.append('g')
 		.classed('loading', true)
 		.append('text')
@@ -448,11 +289,6 @@ function DrawLoadingScreen() {
 		.attr('x', g['stagewidth']*0.75)
 		.attr('y', LayoutY(2))
 		.text('Loading...');
-	// d3.selectAll('.loading').transition()
-	// 	// .delay(g['easeflipin']/2)
-	// 	.ease(g['easeflipin'])
-	// 	.duration(g['duration'])
-	// 	.style('opacity', 1);
 }
 
 function RemoveLoadingScreen() {
@@ -462,216 +298,64 @@ function RemoveLoadingScreen() {
 		.style('opacity', 0)
 		.call(EndAll, function() {
 			d3.selectAll('.loading').remove();
-			// DrawSplashScreens();
 		});
 }
 
-DrawSplashScreens();
-DrawLoadingScreen();
-var vampclock = [];
-var transitionvampclock = [];
-var vamprect = [];
-DebugAnimation();
+function InitializePage() {
+	DrawLoadingScreen();
+	DebugAnimation(); // always necessary to create the vampclock
 
-// ----------------------------------------------------------------------------
-// Main
-// ----------------------------------------------------------------------------
-
-d3.json('arxivgraph.json', function(error, json) {
-	Vamp(g['durationopening']);
-	g['json'] = json;
-	// ConY the original 'name' references to the D3 node indices
-	g['json'].nodes.forEach(function(d) {
-		namehashlookup[d.name] = d;
-	});
-	// YEARLABELS
-	g['yearmin'] = d3.min(g['json'].nodes, function(d) { return d.year; });
-	g['yearmax'] = d3.max(g['json'].nodes, function(d) { return d.year; });
-	InitializeScales();
-	GenerateScales('Y');
-	GenerateScales('X');
-	// Generate links that references the new nodes
-	g['json'].links.forEach(function(d) {
-		d.source = namehashlookup[d.source];
-		d.target = namehashlookup[d.target];
-	});
-	// Resonances from Two Universal Extra Dimensions
-	// var id0 = 'hep-ph/0601186';
-	var id0 = 'hep-ph/0107056';
-	// var id0 = '1207.0798';
-	// var id1 = 'hep-th/9805067';
-
-	// Add the first node
-	var firstnode = namehashlookup[id0];
-	firstnode.visible = true;
-	force.nodes().push(firstnode);
-	// var secondnode = namehashlookup[id1];
-	// secondnode.visible = true;
-	// force.nodes().push(secondnode);
-
-	Refresh();
-
-	CollapseOption(nodes[0][0], 'citing', 'instant');
-
-	// Proton Stability in Six Dimensions
-	// Generic and Chiral Extensions of the Supersymmetric Standard Model
-
-	var node_this = nodes[0][0];
-	var currentduration;
-	if (g['debugskipintro']===false) {
-		g['examiner'] = false;
-		currentduration = g['duration']*2;
-
-//~
-		TransitionVamp(currentduration).each('end', function() {
-			SelectNode(node_this);
-			currentduration = g['duration']*1;
-
-		TransitionVamp(currentduration).each('end', function() {
-			ToggleExaminer();
-			currentduration = g['duration']*1;
-
-		TransitionVamp(currentduration).each('end', function() {
-			ToggleMenu(node_this);
-			currentduration = g['duration']*1;
-
-		TransitionVamp(currentduration).each('end', function() {
-			LoadReferences(node_this);
-			currentduration = g['duration']*1.5;
-
-		// TransitionVamp(currentduration).each('end', function() {
-		// 	ToggleMenu(nodes[0][0]);
-		// 	currentduration = g['duration']*1;
-
-		TransitionVamp(currentduration).each('end', function() {
-			node_this = nodes[0][2];
-			SelectNode(node_this);
-			currentduration = g['duration']*0.5;
-
-		TransitionVamp(currentduration).each('end', function() {
-			UnitTestPerspective('Y', 'incr', 'index');
-			currentduration = g['duration']*2;
-
-		TransitionVamp(currentduration).each('end', function() {
-			UnitTestPerspective('X', 'decr', 'index');
-			currentduration = g['duration']*2;
-
-		// TransitionVamp(currentduration).each('end', function() {
-		// 	ToggleMenu(node_this);
-		// 	currentduration = g['duration']*1.5;	
-
-		TransitionVamp(currentduration).each('end', function() {
-			LoadCiting(node_this);
-			currentduration = g['duration']*1.5;
-
-		// TransitionVamp(currentduration).each('end', function() {
-		// 	TogglePlane(node_this);
-		// 	currentduration = g['duration']*1;
-
-		TransitionVamp(currentduration).each('end', function() {
-			UpdateDropDown('X', 'time', 'notchanged');
-			// UnitTestPerspective('Y', 'decr', 'index');
-			currentduration = g['duration']*2;
-
-		TransitionVamp(currentduration).each('end', function() {
-			UpdateDropDown('Y', 'time', 'notchanged');
-			// UnitTestPerspective('Y', 'decr', 'index');
-			currentduration = g['duration']*2;
-
-		TransitionVamp(currentduration).each('end', function() {
-			g['Y'+'sortold'] = g['Y'+'sortnew'];
-			g['Y'+'sortnew'] = 'free';
-			TransformView('Y');
-			UpdateButton('Y', 'free');
-			currentduration = g['duration']*2;
-
-		TransitionVamp(currentduration).each('end', function() {
-			LoadReferences(node_this);
-			currentduration = g['duration']*1;
-
-		// TransitionVamp(currentduration).each('end', function() {
-		// 	g['X'+'sortold'] = g['X'+'sortnew'];
-		// 	g['X'+'sortnew'] = 'free';
-		// 	TransformView('X');
-		// 	UpdateButton('X', 'free');
-		// 	currentduration = g['duration']*2;
-
-		// TransitionVamp(currentduration).each('end', function() {
-		// 	TogglePlane(node_this);
-		// 	currentduration = g['duration']*0.5;
-			
+	d3.json('arxivgraph.json', function(error, json) {
 		RemoveLoadingScreen();
-		d3.select(node_this).datum().fixed = false;
-		
-		TransitionVamp(currentduration).each('end', function() {				
-			sides.append('g')
-				.classed('splash splashfade', true)
-				.append('text')
-					.classed('loadingtext', true)
-					.attr('x', g['stagewidth']*0.75)
-					.attr('y', LayoutY(2))
-					.text('Click to continue');
-			d3.selectAll('.splashfade')
-				.transition()
-					.delay(g['duration'])
-					.ease(g['easeflipin'])
-					.duration(g['duration'])
-					.style('opacity', 1)
-					.call(StartAll, function() {
-						g['introfinished'] = true;
-						d3.selectAll('.splashclick').style('cursor', 'pointer');
-					});
+		Vamp(g['durationopening']);
+		g['json'] = json;
+		// ConY the original 'name' references to the D3 node indices
+		g['json'].nodes.forEach(function(d) {
+			namehashlookup[d.name] = d;
+		});
+		// YEARLABELS
+		g['yearmin'] = d3.min(g['json'].nodes, function(d) { return d.year; });
+		g['yearmax'] = d3.max(g['json'].nodes, function(d) { return d.year; });
+		InitializeScales();
+		GenerateScales('Y');
+		GenerateScales('X');
+		// Generate links that references the new nodes
+		g['json'].links.forEach(function(d) {
+			d.source = namehashlookup[d.source];
+			d.target = namehashlookup[d.target];
+		});
+		// Proton Stability in Six Dimensions
+		var id0 = 'hep-ph/0107056';
+		// Add the first node
+		var firstnode = namehashlookup[id0];
+		firstnode.visible = true;
+		force.nodes().push(firstnode);
+		// var secondnode = namehashlookup[id1];
+		// secondnode.visible = true;
+		// force.nodes().push(secondnode);
 
-					// .transition()
-					// 	.ease(g['easeflipin'])
-					// 	.duration(g['duration'])
-					// 	.delay(g['duration']/2)
-					// 	.style('opacity', 1)
-					// 	.each('start', function() {
-					// 		RemoveLoadingScreen();
-					// 		g['introfinished'] = true;
-					// 	});
-		});
-		});
-		// });
-		});
-		});
-		}); // UnitTestPerspective('X', 'free', 'index');
-		}); // UpdateDropDown()
-		// }); // LoadCiting()
-		// }); // TogglePlane()
-		}); // LoadReferences()
-		}); // LoadReferences()
-		// });
-		// });
-		// });
-		});
-		});
-		});
-		});
-		});
-	}
-	else if (g['debugskipintro']===true) {
+		Refresh();
+
+		CollapseOption(nodes[0][0], 'citing', 'instant');
+		var node_this = nodes[0][0];
+
+		// force.stop();
 		TransitionVamp(g['duration']).each('end', function() {
 			SelectNode(node_this);
 			ToggleMenu(node_this);
 			TransitionVamp(g['duration']).each('end', function() {
 				d3.select(node_this).datum().fixed = true;
 				LoadReferences(node_this);
-				RemoveLoadingScreen();
 				g['introfinished'] = true;
 				d3.selectAll('.splash').remove();
 				TransitionVamp(g['duration']).each('end', function() {
 					d3.select(node_this).datum().fixed = false;
+					// force.stop();
 				});
 			});
 		});
-	}
-});
-
-// ----------------------------------------------------------------------------
-// Function declarations
-// ----------------------------------------------------------------------------
+	});
+}
 
 function Refresh() {
 	var i;
@@ -3355,28 +3039,32 @@ function BuildAdditionalText() {
 	var textData = [
 		{
 			text: 'Constellation',
-			xlinkhref: 'javascript:void(0);',
+			href: 'javascript:void(0);',
 			size: 'large'
 		},
 		{
 			text: 'github.com',
-			xlinkhref: 'https://github.com/tomswisher/',
+			href: 'https://github.com/tomswisher/',
 			size: 'medium'
 		},
 		{
 			text: 'bl.ocks.org',
-			xlinkhref: 'http://bl.ocks.org/tomswisher',
+			href: 'http://bl.ocks.org/tomswisher',
 			size: 'medium'
 		}
 	];
+	var tempDatum; // stores the d value for classed, since its first argument won't accept f(d)
 	creditsDiv.selectAll('a.credits-text').data(textData).enter()
 		.append('div').classed('credits-row', true)
 			.style('top', function(d,i) { return String(30*i)+'px'; })
 			.append('a')
 				.classed('credits-text', true)
-				.classed(function(d) { return { String(d.size):true }; })
+				.each(function(d) {
+					d3.select(this).classed(d.size, true); // .classed() will not accept a function(d)
+				})
 				.text(function(d) { return d.text; })
-				.attr('xlink:href', function(d) { return d.xlinkhref; });
+				.attr('target', '_blank')
+				.attr('href', function(d) { return d.href; });
 	// handle cross-browser sizing
 	if (g['browserisFirefox'] === true) {
 		d3.selectAll('a.credits-text.large')
@@ -3742,7 +3430,7 @@ function UpdateDurations() {
 	g['durationopening']   = g['duration']*1;
 }
 
-function Initialize() {
+function InitializeG() {
 	var g = {};
 	// ANIMATION
 	g['duration'] = 800;
