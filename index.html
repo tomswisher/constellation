@@ -5,7 +5,8 @@
 <title>Constellation</title>
 <link rel="icon" href="fermata.ico">
 <script src='//d3js.org/d3.v3.min.js' charset='utf-8'></script>
-<link href='constellation.css' rel='stylesheet' type='text/css'>
+<link href='constellation_css.css' rel='stylesheet' type='text/css'>
+<!-- <link rel="stylesheet/less" type="text/css" href="styles.less" /> -->
 </head>
 <body>
 <script>
@@ -110,6 +111,7 @@ svg.append('svg:clipPath').attr('id', 'stageclipPath')
 		.attr('height', g['stageheight']);
 
 var examinerdivroot = d3.select('body').append('div')
+	.attr('id', 'examiner-container')
 	.style('pointer-events', 'none')
 	.style('position', 'absolute')
 	.style('left', (g['sidesleft']+g['SVGoffsetLeft'])+'px')
@@ -946,19 +948,19 @@ function BuildDebugSlider(divindex, property, property_min, property_max) {
 	var width5 = (1/16)*g['stagewidth'];
 
 	forcedebugdivs[divindex].append('label')
-		.classed('forcedebuglabels', true)
+		.classed('forcedebuglabel', true)
 		.style('width', width1+'px')
 		.text(property);
 	
 	forcedebugdivs[divindex].append('label')
-		.classed('forcedebuglabels', true)
+		.classed('forcedebuglabel', true)
 		.classed(property+'_readout', true)
 		.style('width', width2+'px')
 		// .text('( '+g[property]+' )');
 		.text(g[property]);
 	
 	forcedebugdivs[divindex].append('label')
-		.classed('forcedebuglabels', true)
+		.classed('forcedebuglabel', true)
 		.style('width', width3+'px')
 		.text(property_min);
 	
@@ -977,7 +979,7 @@ function BuildDebugSlider(divindex, property, property_min, property_max) {
 		});
 	
 	forcedebugdivs[divindex].append('label')
-		.classed('forcedebuglabels', true)
+		.classed('forcedebuglabel', true)
 		.style('width', width5+'px')
 		.text(property_max);
 	
@@ -2729,10 +2731,11 @@ function DebugAnimation() {
 function DebugForce() {
 	var i;
 	var tempy = 0;
-	for (i=0; i<10; i++) {
+	var forcedebugContainer = d3.select('body').append('div').attr('id', 'forcedebug-container');
+	for (i=0; i<9; i++) {
 		tempy = 2 + (i+2)*(4+g['font-size']);
-		forcedebugdivs[i] = d3.select('body').append('div')
-			.classed('forcedebugdivs', true)
+		forcedebugdivs[i] = forcedebugContainer.append('div')
+			.classed('forcedebugdiv', true)
 			.style('left', (g['sidesleft']+g['SVGoffsetLeft'])+'px')
 			.style('top', (g['svgheight']+g['SVGoffsetTop']+tempy)+'px');
 	}
@@ -3039,42 +3042,34 @@ function BuildAdditionalText() {
 	var textData = [
 		{
 			text: 'Constellation',
-			href: 'javascript:void(0);',
+			href: false,
 			size: 'large'
 		},
 		{
-			text: 'github.com',
+			text: 'github.com/tomswisher',
 			href: 'https://github.com/tomswisher/',
 			size: 'medium'
 		},
 		{
-			text: 'bl.ocks.org',
+			text: 'bl.ocks.org/tomswisher',
 			href: 'http://bl.ocks.org/tomswisher',
 			size: 'medium'
 		}
 	];
-	var tempDatum; // stores the d value for classed, since its first argument won't accept f(d)
 	creditsDiv.selectAll('a.credits-text').data(textData).enter()
 		.append('div').classed('credits-row', true)
-			.style('top', function(d,i) { return String(30*i)+'px'; })
-			.append('a')
-				.classed('credits-text', true)
-				.each(function(d) {
-					d3.select(this).classed(d.size, true); // .classed() will not accept a function(d)
-				})
+			.each(function(d) {
+				d3.select(this).classed(d.size, true); // .classed() will not accept a function(d)
+			})
+			.append('a').classed('credits-text', true)
 				.text(function(d) { return d.text; })
 				.attr('target', '_blank')
-				.attr('href', function(d) { return d.href; });
-	// handle cross-browser sizing
-	if (g['browserisFirefox'] === true) {
-		d3.selectAll('a.credits-text.large')
-			.classed('large', false).classed('firefox-large', true);
-	}
+				.attr('href', function(d) { return d.href===false ? null : d.href; });
 }
 
-//-----------------------------------------------------------------------------------------------
-// This was the function from 2014. I rewrote it above ^^^. I'm leaving it as a learning reminder
-//-----------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
+// This was the function from 2014. I rewrote it above ^^^. I'm leaving it as a reminder
+//--------------------------------------------------------------------------------------
 // function BuildAdditionalText() {
 // 	var shifty = 0.5;
 // 	var numtitles = 7;
@@ -3151,8 +3146,6 @@ function BuildAdditionalText() {
 // 					.text(temptext[i]);
 // 	}
 // }
-//-----------------------------------------------------------------------------------------------
-// This was the function from 2014. I rewrote it above ^^^. I'm leaving it as a learning reminder
 //-----------------------------------------------------------------------------------------------
 
 function CalculatedCharge(d, i) {
