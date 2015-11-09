@@ -221,12 +221,11 @@ var arxivg = sides.append('g')
 	.append('g')
 		.attr('transform', 'scale(1,1)');
 var arxivtext = arxivg.append('svg:a')
-		.attr('opacity', 1)
-		.attr('fill', '#b31b1b')
-		.on('mousemove', function() { UpdateHelpText('Click to open arXiv paper in new tab'); })
-		.datum( {name:'', year:0} )
-		.attr('target', '_blank') // open in a new tab/window
-		.attr('xlink:href', 'http://www.arxiv.org');
+	.attr('opacity', 1)
+	.on('mousemove', function() { UpdateHelpText('Click to open arXiv paper in new tab'); })
+	.datum( {name:'', year:0} )
+	.attr('target', '_blank') // open in a new tab/window
+	.attr('xlink:href', 'http://www.arxiv.org');
 arxivtext.append('text')
 	.classed('selected arxivtext', true)
 	.attr('x', 0)
@@ -443,6 +442,9 @@ function Refresh() {
 				.on('mousemove', function(d) {
 					var node_this = this.parentNode;
 					var node_d = d3.select(node_this).datum();
+					if (g['node_this']!==this.parentNode && g['mousedown']===false) {
+						SelectNode(this.parentNode);
+					}
 					if (d.option==='time') {
 						if (node_d.planeout===true) {
 							UpdateHelpText('Collapse the time plane');
@@ -590,20 +592,17 @@ function BuildAxis(XorY) {
 		.append('g');
 	if (XorY==='Y') {
 		// side
-		newaxis.append('rect')
-			.classed('axisbar', true)
+		newaxis.append('rect').classed('axisbar', true)
 			.attr('x', (-1)*g['axesbarsize'])
 			.attr('y', (-1)*g['stageheight'])
 			.attr('width', g['axesbarsize'])
-			.attr('height', g['stageheight'])
-			.attr('fill', 'black');
+			.attr('height', g['stageheight']);
 		// base
-		newaxis.append('rect')
+		newaxis.append('rect').classed('axisbar', true)
 			.attr('x', (-1)*g['axessize'])
 			.attr('y', (0)*g['axesbarsize'])
 			.attr('width', g['axessize'])
-			.attr('height', g['axesbarsize'])
-			.attr('fill', 'black');
+			.attr('height', g['axesbarsize']);
 		// Keep labels and ticks within the axis
 		newaxis.append('svg:clipPath').attr('id', XorY+'clipPath')
 			.append('rect')
@@ -615,28 +614,24 @@ function BuildAxis(XorY) {
 	}
 	if (XorY==='X') {
 		// side
-		newaxis.append('rect')
-			.classed('axisbar', true)
+		newaxis.append('rect').classed('axisbar', true)
 			.attr('x', (0)*g['stageheight'])
 			.attr('y', (0)*g['axesbarsize'])
 			.attr('width', g['stagewidth'])
-			.attr('height', g['axesbarsize'])
-			.attr('fill', 'black');
+			.attr('height', g['axesbarsize']);
 		// base
-		newaxis.append('rect')
+		newaxis.append('rect').classed('axisbar', true)
 			.attr('x', -g['axesbarsize'])
 			.attr('y', 0)
 			.attr('width', g['axesbarsize'])
-			.attr('height', g['axessize'])
-			.attr('fill', 'black');
+			.attr('height', g['axessize']);
 		// Keep labels and ticks within the axis
 		newaxis.append('svg:clipPath').attr('id', XorY+'clipPath')
 			.append('rect')
 				.attr('x', -g['axesbarsize'])
 				.attr('y', -g['stageheight'])
 				.attr('width', g['stagewidth']+g['axesbarsize'])
-				.attr('height', g['axessize'] + g['stageheight'])
-				.attr('opacity', 0);
+				.attr('height', g['axessize'] + g['stageheight']);
 		newaxis.attr('transform', 'scale(0,0)');
 	}
 	newaxis
@@ -698,7 +693,6 @@ function Vamp(durationvamp) {
 	// only update vamptime if necessary
 	if (durationvamp > g['vamptime']) {
 		g['vamptime'] = durationvamp;
-		console.log('Vamp', durationvamp, g['vamptime']);
 		body.style('cursor', 'wait', 'important');
 		viewmenus['Y'][0][0].disabled = true;
 		viewmenus['X'][0][0].disabled = true;
@@ -722,9 +716,6 @@ function Vamp(durationvamp) {
 					g['vamptime'] = 0;
 					body.style('cursor', 'default', 'important');
 				});
-	}
-	else {
-		console.log('No Vamp', durationvamp, g['vamptime']);
 	}
 }
 
@@ -1561,9 +1552,9 @@ function BuildExaminerDiv(node_this) {
 	var tempheight = g['font-size']*temparray.length;
 	var tempwidth1 = 132;
 	var tempwidth2 = 153;
-	var temptop = tempy - tempheight/2 + 0*Radius(2.66);
-	var templeft1 = Radius(4.33) + tempx + 10;
-	var templeft2 = Radius(4.33) + tempwidth1 + tempx + g['font-size']/2;
+	var temptop = tempy - tempheight - Radius(3);
+	var templeft1 = tempx + Radius(2);
+	var templeft2 = tempwidth1 + Radius(2) + tempx + g['font-size']/2;
 	var tempopacitybg, tempopacitytext;
 	if (g['examiner']===true) {
 		tempopacitybg = g['examinerbgopacity'];
@@ -2113,11 +2104,11 @@ function StartAll(transition, callback) {
 function LoadReferences(node_this) {
 	Vamp(g['duration']);
 	var node_d = d3.select(node_this).datum();
-	node_d.fixed = true;
+	// node_d.fixed = true;
 	var testnode = nodes.filter(function(d) { return d.index===1; })[0][0];
 	UpdateButton(false, 'LoadReferences');
 	if (node_d.referencesout || node_d.noreferences) {
-		node_d.fixed = false;
+	// 	node_d.fixed = false;
 	}
 	else {
 		AttemptLinkNode('references', node_this);
@@ -2129,9 +2120,9 @@ function LoadReferences(node_this) {
 		else {
 			CollapseOption(node_this, 'references', 'instant');
 		}
-		TransitionVamp(g['duration']).each('end', function() {
-			node_d.fixed = false;
-		});
+		// TransitionVamp(g['duration']).each('end', function() {
+		// 	node_d.fixed = false;
+		// });
 	}
 
 }
@@ -2139,10 +2130,10 @@ function LoadReferences(node_this) {
 function LoadCiting(node_this) {
 	Vamp(g['duration']);
 	var node_d = d3.select(node_this).datum();
-	node_d.fixed = true;
+	// node_d.fixed = true;
 	UpdateButton(false, 'LoadCiting');
 	if (node_d.citingout || node_d.nociting) {
-		node_d.fixed = false;
+		// node_d.fixed = false;
 	}
 	else {
 		AttemptLinkNode('citing', node_this);
@@ -2154,9 +2145,9 @@ function LoadCiting(node_this) {
 		else {
 			CollapseOption(node_this, 'citing', 'instant');
 		}
-		TransitionVamp(g['duration']).each('end', function() {
-			node_d.fixed = false;
-		});
+		// TransitionVamp(g['duration']).each('end', function() {
+		// 	node_d.fixed = false;
+		// });
 	}
 }
 
@@ -2199,9 +2190,9 @@ function TogglePlane(node_this) {
 				.call(ArcDataMaxReduce);
 		}
 	}
-	TransitionVamp(g['duration']).each('end', function() {
-		node_d.fixed = false;
-	});
+	// TransitionVamp(g['duration']).each('end', function() {
+	// 	node_d.fixed = false;
+	// });
 }
 
 function ArcDataMaxReduce(selection) {
@@ -2410,7 +2401,7 @@ function AddPlanePiece(node_this, quarter, XorY) {
 					}
 				})		
 				.each(function(d) {
-					var tempfactor = 0.001;
+					var tempfactor = 0.0005;
 					var tempfraction = 0.5;
 					if (quarter==='topright') {
 						d.startAngle_min = (-tempfactor*tempfraction + 0/4)*2*Math.PI;
@@ -2433,7 +2424,7 @@ function AddPlanePiece(node_this, quarter, XorY) {
 					d.startAngle_max  = d.startAngle_min;
 					d.endAngle_max    = d.endAngle_min;
 					d.innerRadius_max = Radius(1);
-					d.outerRadius_max = g['stageheight']*(3/8);
+					d.outerRadius_max = g['planeradius'];
 				})
 				.call(SetArcAttrFromData, 'current', 'min');
 
@@ -2441,11 +2432,10 @@ function AddPlanePiece(node_this, quarter, XorY) {
 			.insert('svg:path', '.menus.references')
 				.datum({})
 				.each(function(d) {	d.option = 'time'; })
-				.classed('planeborders', true)
+				.classed('planeborder', true)
 				.classed(quarter, true)
 				.attr('opacity', g['planeborderopacitynow'])
-				.style('pointer-events', g['planepointerevents'])
-				.attr('fill', 'black')		
+				.style('pointer-events', g['planepointerevents'])		
 				.each(function(d) {
 					// var tempfactor = 0.001;
 					var tempfactor = 0;
@@ -2470,8 +2460,8 @@ function AddPlanePiece(node_this, quarter, XorY) {
 					d.outerRadius_min = Radius(1);
 					d.startAngle_max  = d.startAngle_min;
 					d.endAngle_max    = d.endAngle_min;
-					d.innerRadius_max = g['stageheight']*(3/8) - 2;
-					d.outerRadius_max = g['stageheight']*(3/8);
+					d.innerRadius_max = g['planeradius'] - 2;
+					d.outerRadius_max = g['planeradius'];
 				})
 				.call(SetArcAttrFromData, 'current', 'min');
 		
@@ -2592,6 +2582,7 @@ function ToggleMenu(node_this) {
 	var node_d = d3.select(node_this).datum();
 	if (node_d.menuout===false) {
 		tempvalue = 'max';
+		node_d.fixed = true;
 		// tempfixed = true;
 		tempmenuout = true;
 		temppointerevents = 'all';
@@ -2720,13 +2711,11 @@ function DebugAnimation() {
 function DebugForce() {
 	var i;
 	var tempy = 0;
+	body.append('br');
 	var forcedebugContainer = body.append('div').attr('id', 'forcedebug-container');
 	for (i=0; i<9; i++) {
-		tempy = 2 + (i+2)*(4+g['font-size']);
 		forcedebugdivs[i] = forcedebugContainer.append('div')
-			.classed('forcedebugdiv', true)
-			.style('left', (g['sidesleft']+g['SVGoffsetLeft'])+'px')
-			.style('top', (g['svgheight']+g['SVGoffsetTop']+tempy)+'px');
+			.classed('forcedebugdiv', true);
 	}
 	BuildDebugSlider(0, 'duration',       0, 5000);
 	BuildDebugSlider(1, 'node_r',         0, 100);
@@ -3195,55 +3184,48 @@ function BuildArcTween(transition, direction) {
 }
 
 function BuildIcon(selection, icon, XorY) {
-	var trianglewidth, triangleheight, offset, circleradius, tempstrokewidth;
+	var trianglewidth, triangleheight, offset, circleradius;
 	if (icon==='ToggleExaminer') {
 		selection.call(DrawIconBase, 'notselected');
-		selection.append('rect')
+		selection.append('rect').classed('symbol', true)
 			.attr('x', (-0.5/12)*g['iconsize'])
 			.attr('y', (1/12)*g['iconsize'])
 			.attr('width', (1/12)*g['iconsize'])
-			.attr('height', (3.9/12)*g['iconsize'])
-			.attr('fill', 'black')
-			.attr('stroke', 'black')
-			.attr('stroke-width', 2);
-		selection.append('circle')
+			.attr('height', (3.9/12)*g['iconsize']);
+		selection.append('circle').classed('symbol', true)
+			.classed('inverted', true)
 			.attr('cx', 0)
 			.attr('cy', (-1.25/12)*g['iconsize'])
-			.attr('r', (3.95/12)*g['iconsize'])
-			.attr('fill', 'black')
-			.attr('stroke', 'black')
-			.attr('stroke-width', 0);
-		selection.append('circle')
-			.attr('cx', 0)
-			.attr('cy', (-1.25/12)*g['iconsize'])
-			.attr('r', (2.85/12)*g['iconsize'])
-			.attr('fill', 'white')
-			.attr('stroke', 'black')
-			.attr('stroke-width', 0);
-		selection.call(DrawIconNode, 'selected');
+			.attr('r', (3.95/12)*g['iconsize']);
+		// selection.append('circle').classed('symbol', true)
+		// 	.classed('inverted', true)
+		// 	.attr('cx', 0)
+		// 	.attr('cy', (-1.25/12)*g['iconsize'])
+		// 	.attr('r', (2.85/12)*g['iconsize']);
+		selection.call(DrawSymbolNode, 'selected');
 	}
 	else if (icon==='ToggleMenu') {
 		selection.call(DrawIconBase, 'selected');
-		selection.call(DrawIconArc, 'time');
-		selection.call(DrawIconArc, 'references');
-		selection.call(DrawIconArc, 'citing');
-		// selection.call(DrawIconArc, 'hide');
-		selection.call(DrawIconNode, 'selected');
+		selection.call(DrawSymbolArc, 'time');
+		selection.call(DrawSymbolArc, 'references');
+		selection.call(DrawSymbolArc, 'citing');
+		// selection.call(DrawSymbolArc, 'hide');
+		selection.call(DrawSymbolNode, 'selected');
 	}
 	else if (icon==='TogglePlane') {
 		selection.call(DrawIconBase, 'selected');
-		selection.call(DrawIconArc, 'time');
-		selection.call(DrawIconNode, 'selected');
+		selection.call(DrawSymbolArc, 'time');
+		selection.call(DrawSymbolNode, 'selected');
 	}
 	else if (icon==='LoadReferences') {
 		selection.call(DrawIconBase, 'selected');
-		selection.call(DrawIconArc, 'references');
-		selection.call(DrawIconNode, 'selected');
+		selection.call(DrawSymbolArc, 'references');
+		selection.call(DrawSymbolNode, 'selected');
 	}
 	else if (icon==='LoadCiting') {
 		selection.call(DrawIconBase, 'selected');
-		selection.call(DrawIconArc, 'citing');
-		selection.call(DrawIconNode, 'selected');
+		selection.call(DrawSymbolArc, 'citing');
+		selection.call(DrawSymbolNode, 'selected');
 	}
 	else if (icon==='free') {
 		selection.call(DrawIconBase, 'notselected');
@@ -3252,8 +3234,7 @@ function BuildIcon(selection, icon, XorY) {
 			.attr('x', (-1.75/8)*g['iconsize'])
 			.attr('y', (-1.75/8)*g['iconsize'])
 			.attr('width', (3.5/8)*g['iconsize'])
-			.attr('height', (3.5/8)*g['iconsize'])
-			.style('fill', 'black');
+			.attr('height', (3.5/8)*g['iconsize']);
 	}
 	else if (icon==='triangledecr') {
 		selection.call(DrawIconBase, 'notselected');
@@ -3264,8 +3245,7 @@ function BuildIcon(selection, icon, XorY) {
 			.classed('symbol', true)
 			.attr('points', function() {
 				return '0'+','+(-triangleheight+offset)+' '+(1/2)*trianglewidth+','+offset+' '+(-1/2)*trianglewidth+','+offset;
-			})
-			.style('fill', 'black');	
+			});	
 		if (XorY==='Y') {
 			selection.attr('transform', 'rotate(180)');
 		}
@@ -3282,8 +3262,7 @@ function BuildIcon(selection, icon, XorY) {
 			.classed('symbol', true)
 			.attr('points', function() {
 				return '0' + ',' + (-triangleheight + offset)+ ' ' +(1/2)*trianglewidth + ',' + offset+ ' ' +(-1/2)*trianglewidth + ',' + offset;
-			})
-			.style('fill', 'black');	
+			});	
 		if (XorY==='Y') {
 			selection.attr('transform', 'rotate(0)');
 		}
@@ -3300,50 +3279,40 @@ function BuildIcon(selection, icon, XorY) {
 		triangleheight = (Math.sqrt(3)/2)*trianglewidth;
 		offset = (1/2)*trianglewidth*Math.tan((1/12)*2*Math.PI);
 		circleradius = (3/24)*g['iconsize'];
-		tempstrokewidth = 2;
-		selection.append('line')
+		selection.append('line').classed('symbol', true)
 			.attr('x1', 0)
 			.attr('y1', 0)
 			.attr('x2', 0)
 			.attr('y2', -triangleheight + offset)
-			.attr('stroke-width', 3)
 			.classed(option, true);
-		selection.append('line')
+		selection.append('line').classed('symbol', true)
 			.attr('x1', 0)
 			.attr('y1', 0)
 			.attr('x2', (1/2)*trianglewidth)
 			.attr('y2', offset)
-			.attr('stroke-width', 3)
 			.classed(option, true);
-		selection.append('line')
+		selection.append('line').classed('symbol', true)
 			.attr('x1', 0)
 			.attr('y1', 0)
 			.attr('x2', (-1/2)*trianglewidth)
 			.attr('y2', offset)
-			.attr('stroke-width', 3)
 			.classed(option, true);
-		selection.append('circle')
+		selection.append('circle').classed('symbol', true)
 			.attr('cx', 0)
 			.attr('cy', -triangleheight + offset)
 			.attr('r', circleradius)
-			.attr('stroke-width', tempstrokewidth)
-			.attr('stroke', 'black')
 			.classed(option, true);
-		selection.append('circle')
+		selection.append('circle').classed('symbol', true)
 			.attr('cx', (1/2)*trianglewidth)
 			.attr('cy', offset)
 			.attr('r', circleradius)
-			.attr('stroke-width', tempstrokewidth)
-			.attr('stroke', 'black')
 			.classed(option, true);
-		selection.append('circle')
+		selection.append('circle').classed('symbol', true)
 			.attr('cx', (-1/2)*trianglewidth)
 			.attr('cy', offset)
 			.attr('r', circleradius)
-			.attr('stroke-width', tempstrokewidth)
-			.attr('stroke', 'black')
 			.classed(option, true);
-		selection.call(DrawIconNode, 'notselected');
+		selection.call(DrawSymbolNode, 'notselected');
 	}
 } 
 
@@ -3370,11 +3339,11 @@ function DrawCollapsedButton(xindex, yindex, XorY) {
 		.attr('y2', tempy2);
 }
 
-function DrawIconArc(selection, option) {
+function DrawSymbolArc(selection, option) {
 	var tempstartangle = 2*Math.PI*(g['angleinitial']+g['angle'+option]+0);
 	var tempendangle   = 2*Math.PI*(g['angleinitial']+g['angle'+option]+0+g['anglewidth']);
 	selection.append('svg:path')
-		.classed('icons', true)
+		.classed('symbol', true)
 		.classed(option, true)
 		.attr('d', d3.svg.arc()
 			.innerRadius(0)
@@ -3385,9 +3354,9 @@ function DrawIconArc(selection, option) {
 	return selection;
 }
 
-function DrawIconNode(selection, option) {
+function DrawSymbolNode(selection, option) {
 	selection.append('circle')
-		.classed('icons', true)
+		.classed('symbol', true)
 		.classed(option, true)
 		.attr('cx', 0)
 		.attr('cy', 0)
@@ -3397,9 +3366,9 @@ function DrawIconNode(selection, option) {
 
 function DrawIconBase(selection, option) {
 	selection.append('circle')
-		.classed('icons', true)
+		.classed('iconbase', true)
 		// .classed(option, true)
-		.classed('notselected', true)
+		// .classed('notselected', true)
 		.attr('cx', 0)
 		.attr('cy', 0)
 		.attr('r', (1/2)*g['iconsize']);
@@ -3539,7 +3508,7 @@ function InitializeG() {
 	g['graphfilldepth'] = 1;
 	g['json'] = {};
 	g['examiner'] = true;
-	g['examinerbgopacity'] = 0.9;
+	g['examinerbgopacity'] = 1;
 	g['introfinished'] = false;
 	g['stagerootx'] = 0;
 	g['Yrootx'] = 0;
@@ -3557,7 +3526,6 @@ function InitializeG() {
 
 	g['d3event'] = 0;
 	g['vamptime'] = 1000000; // The user can't interact until the page loads
-	console.log('InitializeG', g['vamptime']);
 	g['shiftKey'] = false;
 
 	g['Ysortold'] = 'free';
@@ -3582,10 +3550,11 @@ function InitializeG() {
 	g['node_r'] = 11;
 	g['font-size'] = 18;
 
-	g['planeopacitymax'] = 0.9;
+	g['planeopacitymax'] = 0.8;
 	g['planeopacitynow'] = g['planeopacitymax'];
 	g['planeborderopacitynow'] = 1.0;
 	g['planepointerevents'] = 'all';
+	g['planeradius'] = 0.25 * g['svgwidth'];
 
 	// MENUOPTIONS
 	g['angleinitial'] = 3/24;

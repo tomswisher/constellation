@@ -1,3 +1,14 @@
+@references:  #68645b;
+@citing:      lightgray;
+@time:        darkorange;
+@selected:    #b31b1b;
+@notselected: white;
+@foreground:  black;
+@background:  white;
+// @hide:       ;
+body {
+	background: @background;
+}
 div#credits-container {
 	position: absolute;
 	width: 200px;
@@ -24,7 +35,7 @@ div#credits-container {
 		}
 		a.credits-text {
 			font-family: Arial;
-			color: black;
+			color: @foreground;
 		}
 	}
 }
@@ -33,10 +44,9 @@ div#examiner-container {
 		/*border-radius: 20px;*/
 		position: absolute;
 		pointer-events: none;
-		background-color: white;
-		/*background-color: gainsboro;*/
-		/*border: 1px solid;*/
-		/*border-color: black;*/
+		background-color: @background;
+		border: 1px solid;
+		border-color: @foreground;
 	}
 	.examinerdiv {
 		position: absolute;
@@ -48,7 +58,7 @@ div#examiner-container {
 		font-family: Arial;
 		font-size: 18px;
 		padding: 2px;
-		color: #b31b1b;
+		color: @foreground;
 		left: 4px;
 	}
 	.examinertext2 {
@@ -57,7 +67,7 @@ div#examiner-container {
 		font-family: Arial;
 		font-size: 18px;
 		padding: 2px;
-		color: #b31b1b;
+		color: @foreground;
 		left: 4px;
 	}
 }
@@ -68,6 +78,7 @@ div#forcedebug-container {
 		display: inline-block;
 		font-family: Arial;
 		font-size: 18px;
+		color: @foreground;
 	}
 	input.forcedebugslider {
 		font-size: 12px;
@@ -79,34 +90,69 @@ g#sides-container {
 		font-size: 18px;
 		font-family: Arial;
 	}
+	.blitX, .blitY {
+		rect, text {
+			fill: @foreground;
+		}
+	}
+	.axesticks {
+		stroke: none;
+	}
+	.axesgridlines {
+		stroke: none;
+		fill: @foreground;
+	}
+	.axeslabels {
+		font-family: Arial;
+		font-size: 18px;
+		text-anchor: middle;
+		dominant-baseline: central;
+	}
+	.axesbars {
+		fill: @background;
+		stroke: gainsboro;
+		stroke-width: 2px;
+		cursor: move; /* fallback if grab cursor is unsupported */
+		cursor: grab;
+		cursor: -moz-grab;
+		cursor: -webkit-grab;
+	}
+	.axesbars:active {
+		cursor: grabbing;
+		cursor: -moz-grabbing;
+		cursor: -webkit-grabbing;
+	}
+	.axisbar {
+		fill: @foreground;
+	}
 }
 div#viewmenu-container {
 	select.viewmenu {
 		font-size: 18px;
 		position: absolute;
 		border: 0;
-		color: black;
-		background-color: white;
+		color: @foreground;
+		background-color: @background;
 	}	
 }
 .notselected {
-	fill: white;
+	fill: @notselected;
 }
 .selected {
-	fill: #b31b1b;
+	fill: @selected !important;
 }
 .time {
-	fill: #E6E6E6;
+	fill: @time !important;
 }
 .references {
-	fill: darkorange;
+	fill: @references !important;
 }
 .citing {
-	fill: black;
+	fill: @citing !important;
 }
-.hide {
-	fill: #68645b;
-}
+// .hide {
+// 	fill: @hide;
+// }
 .linklines {
 	pointer-events: none;
 	stroke: gainsboro;
@@ -114,26 +160,26 @@ div#viewmenu-container {
 }
 .linklines.references {
 	pointer-events: none;
-	stroke: darkorange;
+	stroke: @references;
 	stroke-width: 3px;
 }
 .linklines.citing {
 	pointer-events: none;
-	stroke: #68645b;
+	stroke: @citing;
 	stroke-width: 3px;
 }
-.linklines.hide {
-	pointer-events: none;
-	stroke: black;
-	stroke-width: 3px;
-}
+// .linklines.hide {
+// 	pointer-events: none;
+// 	stroke: @hide;
+// 	stroke-width: 3px;
+// }
 .nodecircles {
 	cursor: pointer;
-	stroke: black;
+	stroke: @foreground;
 	stroke-width: 2px;
 }
 .menus {
-	stroke: black;
+	stroke: @foreground;
 	stroke-width: 2px;
 	cursor: pointer;
 }
@@ -141,18 +187,23 @@ div#viewmenu-container {
 	cursor: pointer;
 	stroke: none;
 }
-.planeborders {
-	fill: black;
+.planeborder {
+	fill: @foreground;
+}
+.iconbase {
+	cursor: pointer;
+	fill: @background;
+	stroke: @foreground;
+	stroke-width: 2px;
 }
 .symbol {
-	fill: black;
-	stroke: none;
 	cursor: pointer;
+	fill: @foreground;
+	stroke: @foreground;
+	stroke-width: 2px
 }
-.icons {
-	cursor: pointer;
-	stroke: black;
-	stroke-width: 2px;
+.symbol.inverted {
+	fill: @background;
 }
 .arxivtext {
 	cursor: pointer;
@@ -160,52 +211,25 @@ div#viewmenu-container {
 	font-size: 18px;
 	dominant-baseline: central;
 	font-family: Arial;
-	/*text-decoration: underline;*/
-}
-.axesticks {
-	stroke: none;
-}
-.axesgridlines {
-	stroke: none;
-	fill: black;
-}
-.axeslabels {
-	font-family: Arial;
-	font-size: 18px;
-	text-anchor: middle;
-	dominant-baseline: central;
+	text-decoration: underline;
+	fill: -webkit-link;
+	// fill: @foreground;
 }
 .blanked {
 	fill: #68645b;
 	stroke: none;
 }
-.axesbars {
-	fill: white;
-	stroke: gainsboro;
-	stroke-width: 2px;
-	cursor: move; /* fallback if grab cursor is unsupported */
-	cursor: grab;
-	cursor: -moz-grab;
-	cursor: -webkit-grab;
-}
-.axesbars:active {
-	cursor: grabbing;
-	cursor: -moz-grabbing;
-	cursor: -webkit-grabbing;
-}
 .svgbg {
-	fill: white;
+	fill: @background;
 }
 .stagebg {
-	fill: white;
-	/*stroke: gainsboro;*/
-	/*stroke-width: 2px;*/
+	fill: @background;
 }
 .sidesbg {
-	fill: white;
+	fill: @background;
 }
 .collapsed {
-	stroke: black;
+	stroke: @foreground;
 	stroke-width: 2px;
 	cursor: default;
 }
@@ -219,11 +243,11 @@ div#viewmenu-container {
 	font-size: 29px;
 	font-family: Arial;
 	opacity: 1;
-	fill: #0783B6;
+	fill: @background;
 }
 .loadingrect {
 	pointer-events: none;
-	fill: white;
+	fill: @foreground;
 	opacity: 1;
 }
 .helptext {
@@ -232,7 +256,8 @@ div#viewmenu-container {
 	dominant-baseline: central;
 	font-size: 18px;
 	font-family: Arial;
-	fill: #0783B6;
+	// fill: #0783B6;
+	fill: @foreground;
 }
 .vampclock {
 	pointer-events: none;
@@ -240,7 +265,7 @@ div#viewmenu-container {
 	dominant-baseline: central;
 	font-size: 29px;
 	font-family: Arial;
-	fill: black;
+	fill: @foreground;
 }
 .vamprect {
 	pointer-events: none;
