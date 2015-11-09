@@ -13,15 +13,8 @@
 
 'use strict';
 
-// ----------------------------------------------------------------------------
-// Settings
-// ----------------------------------------------------------------------------
 var g = InitializeG();
 UpdateDurations();
-g['debuglayout']       = false;
-g['debugforce']        = true;
-g['debuganimation']    = false;
-g['debugskipintro']    = true;
 
 // ----------------------------------------------------------------------------
 // Variable and D3 function declarations
@@ -261,6 +254,11 @@ BuildAdditionalText();
 
 // ----------------------------------------
 // DEBUG
+g['debuglayout']       = false;
+g['debugforce']        = true;
+g['debuganimation']    = false;
+g['debugskipintro']    = true;
+
 var forcedebugdivs = []; // Should exist in case of Unit Tests
 if (g['debugforce']===true) {
 	DebugForce();
@@ -270,9 +268,9 @@ if (g['debuglayout']===true) {
 }
 // ----------------------------------------
 
-var vampclock = [];
-var transitionvampclock = [];
-var vamprect = [];
+var vampclock, transitionvampclock, vamprect;
+DrawLoadingScreen();
+DebugAnimation(); // always necessary to create the vampclock
 
 window.onload = InitializePage;
 
@@ -301,12 +299,11 @@ function RemoveLoadingScreen() {
 }
 
 function InitializePage() {
-	DrawLoadingScreen();
-	DebugAnimation(); // always necessary to create the vampclock
-
 	d3.json('arxivgraph.json', function(error, json) {
 		RemoveLoadingScreen();
-		Vamp(g['durationopening']);
+		// g['vamptime'] = 0;
+		// console.log('InitializePage', g['vamptime']);
+		// Vamp(g['durationopening']);
 		g['json'] = json;
 		// ConY the original 'name' references to the D3 node indices
 		g['json'].nodes.forEach(function(d) {
@@ -349,6 +346,9 @@ function InitializePage() {
 				TransitionVamp(g['duration']).each('end', function() {
 					d3.select(node_this).datum().fixed = false;
 					// force.stop();
+					g['vamptime'] = 0;
+					Vamp(1); // Initialize vamp timer
+					console.log('Ready');
 				});
 			});
 		});
@@ -696,12 +696,14 @@ function BuildScaleCollection(scalename, domainmin, domainmax, XorY) {
 
 function Vamp(durationvamp) {
 	// only update vamptime if necessary
-	if (durationvamp>g['vamptime']) {
+	if (durationvamp > g['vamptime']) {
+		g['vamptime'] = durationvamp;
+		console.log('Vamp', durationvamp, g['vamptime']);
 		body.style('cursor', 'wait', 'important');
 		viewmenus['Y'][0][0].disabled = true;
 		viewmenus['X'][0][0].disabled = true;
-		d3.select('.vamprect').attr('fill', '#b31b1b');
-		g['vamptime'] = durationvamp;
+		d3.select('.vamprect').attr('fill', 'red');
+		vampclock.interrupt();
 		vampclock
 			.text(parseFloat(g['vamptime']).toFixed(0))
 			.transition()
@@ -721,18 +723,23 @@ function Vamp(durationvamp) {
 					body.style('cursor', 'default', 'important');
 				});
 	}
+	else {
+		console.log('No Vamp', durationvamp, g['vamptime']);
+	}
 }
 
 function TransitionVamp(durationvamp) {
 	// if (g['vamptime']===0) {
-	// 	Vamp(durationvamp);
+		Vamp(durationvamp);
 	// }
 	var transition = transitionvampclock
 		.attr('clock', durationvamp)
+		.text(durationvamp)
 		.transition()
 			.ease('linear')
 			.duration(durationvamp)
-			.attr('clock', 0);
+			.attr('clock', 0)
+			.text(0);
 	return transition;
 }
 
@@ -2689,22 +2696,24 @@ function DebugAnimation() {
 	}
 	vampclock = sides.append('text')
 		.classed('vampclock', true)
-		.attr('transform', 'translate('+LayoutX(g['wnum']-1)+','+LayoutY(g['hnum']-1)+')')
+		.attr('transform', 'translate('+LayoutX(0)+','+LayoutY(g['hnum']-3)+')')
 		.attr('x', -0.5*g['iconpad'])
-		.text(parseFloat('0').toFixed(0))
+		.text(parseFloat(g['vamptime']).toFixed(0))
 		.style('opacity', tempopacity);
 	transitionvampclock = sides.append('text')
-		.attr('transform', 'translate('+LayoutX(g['wnum']-1)+','+LayoutY(g['hnum']-2)+')')
+		.classed('transitionvampclock', true)
+		.attr('transform', 'translate('+LayoutX(0)+','+LayoutY(g['hnum']-4)+')')
 		.attr('x', -0.5*g['iconpad'])
+		.text(0)
 		.style('opacity', tempopacity);
 	vamprect = sides.append('rect')
 		.classed('vamprect', true)
-		.attr('transform', 'translate('+LayoutX(g['wnum']-1)+','+LayoutY(g['hnum']-1)+')')
+		.attr('transform', 'translate('+LayoutX(0)+','+LayoutY(g['hnum']-1)+')')
 		.attr('x', (-1/1)*g['iconsize'])
 		.attr('y', (1/2)*g['iconsize'])
 		.attr('width', (1/1)*g['iconsize'])
 		.attr('height', (1/1)*g['iconsize'])
-		.attr('fill', 'green')
+		.attr('fill', g['vamptime']===0 ? 'green' : 'red')
 		.style('opacity', tempopacity);
 }
 
@@ -3009,11 +3018,12 @@ function TransformView(XorY, viewchange) {
 	g['nodediffx'] = finalnodex - initnodex;
 	g['nodediffy'] = finalnodey - initnodey;
 	TransitionDragStage(XorY, -g['nodediffx'], -g['nodediffy']);
-	TransitionVamp(g['durationtranslate']).each('end', function() {
-		if (g['vamptime']===0) {
-			force.start();
-		}
-	});
+	// This might be causing memory issues
+	// TransitionVamp(g['durationtranslate']).each('end', function() {
+	// 	if (g['vamptime']===0) {
+	// 		force.start();
+	// 	}
+	// });
 }
 
 function BuildAdditionalText() {
@@ -3546,7 +3556,8 @@ function InitializeG() {
 	g['nodediffy'] = 0;
 
 	g['d3event'] = 0;
-	g['vamptime'] = 0;
+	g['vamptime'] = 1000000; // The user can't interact until the page loads
+	console.log('InitializeG', g['vamptime']);
 	g['shiftKey'] = false;
 
 	g['Ysortold'] = 'free';
