@@ -8,14 +8,14 @@ div#credits-container {
 		display: block;
 		text-align: center;
 		&.medium {
-			height: 22px;
+			height: 30px;
 			// line-height: 22px;
 			a.credits-text {
 				font-size: 18px
 			}
 		}
 		&.large {
-			height: 40px;
+			height: 60px;
 			// line-height: 40px
 			a.credits-text {
 				font-size: 36px;
@@ -28,7 +28,6 @@ div#credits-container {
 		}
 	}
 }
-
 div#examiner-container {
 	.examinerbg {
 		/*border-radius: 20px;*/
@@ -62,7 +61,6 @@ div#examiner-container {
 		left: 4px;
 	}
 }
-
 div#forcedebug-container {
 	min-width: 600px;
 	label.forcedebuglabel {
@@ -71,15 +69,25 @@ div#forcedebug-container {
 		font-family: Arial;
 		font-size: 18px;
 	}
+	input.forcedebugslider {
+		font-size: 12px;
+		box-sizing: border-box;
+	}
 }
-
-text {
-	font-size: 18px;
-	font-family: Arial;
+g#sides-container {
+	text {
+		font-size: 18px;
+		font-family: Arial;
+	}
 }
-input {
-	font-size: 12px;
-	box-sizing: border-box;
+div#viewmenu-container {
+	select.viewmenu {
+		font-size: 18px;
+		position: absolute;
+		border: 0;
+		color: black;
+		background-color: white;
+	}	
 }
 .notselected {
 	fill: white;
@@ -217,33 +225,6 @@ input {
 	pointer-events: none;
 	fill: white;
 	opacity: 1;
-}
-.splash {
-	opacity: 0;
-}
-.splashbg {
-	fill: white;
-	opacity: 1;
-}
-.splashtext {
-	pointer-events: none;
-	dominant-baseline: central;
-	text-anchor: start;
-	font-size: 29px;
-	font-family: Arial;
-	opacity: 1;
-	fill: #0783B6;
-}
-.splashclick {
-	fill: white;
-	opacity: 0;
-	cursor: wait;
-}
-.splashrects {
-	fill-opacity: 0;
-	stroke-opacity: 1;
-	stroke: #0783B6;
-	stroke-width: 2px;
 }
 .helptext {
 	pointer-events: none;

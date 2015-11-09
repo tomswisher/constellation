@@ -5,8 +5,8 @@
 <title>Constellation</title>
 <link rel="icon" href="fermata.ico">
 <script src='//d3js.org/d3.v3.min.js' charset='utf-8'></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>	
 <link href='constellation_css.css' rel='stylesheet' type='text/css'>
-<!-- <link rel="stylesheet/less" type="text/css" href="styles.less" /> -->
 </head>
 <body>
 <script>
@@ -24,7 +24,7 @@ g['debuganimation']    = false;
 g['debugskipintro']    = true;
 
 // ----------------------------------------------------------------------------
-// D3.js and DOM declarations
+// Variable and D3 function declarations
 // ----------------------------------------------------------------------------
 var nodes;
 var links;
@@ -82,7 +82,11 @@ var menuoptions = [
 	}
 })();
 
-d3.select('body')
+// ----------------------------------------------------------------------------
+// Building the DOM
+// ----------------------------------------------------------------------------
+
+var body = d3.select('body')
 	.on('keydown', function() {
 		if (d3.event.shiftKey) { g['shiftKey'] = true; }
 	})
@@ -90,18 +94,9 @@ d3.select('body')
 		if (d3.event.keyIdentifier==='Shift') {	g['shiftKey'] = false; }
 	});
 
-var svg = d3.select('body').append('svg')
+var svg = body.append('svg')
 	.attr('width', g['stagewidth'] + g['sidesleft'] + g['sidesright'])
-	.attr('height', g['stageheight'] + g['sidestop'] + g['sidesbottom'])
-	// .on('mouseover', ClearHelpText)
-	;
-
-// svg.append('rect')
-// 	.classed('svgbg', true)
-// 	.attr('x', -g['sidesleft'])
-// 	.attr('y', -g['sidestop'])
-// 	.attr('width', g['stagewidth'])
-// 	.attr('height', g['stageheight']);
+	.attr('height', g['stageheight'] + g['sidestop'] + g['sidesbottom']);
 
 svg.append('svg:clipPath').attr('id', 'stageclipPath')
 	.append('rect')
@@ -110,7 +105,7 @@ svg.append('svg:clipPath').attr('id', 'stageclipPath')
 		.attr('width', g['stagewidth'])
 		.attr('height', g['stageheight']);
 
-var examinerdivroot = d3.select('body').append('div')
+var examinerdivroot = body.append('div')
 	.attr('id', 'examiner-container')
 	.style('pointer-events', 'none')
 	.style('position', 'absolute')
@@ -147,6 +142,7 @@ stage = stage
 	.append('g').classed('stagerooty', true);
 
 var sides = svg.append('g')
+	.attr('id', 'sides-container')
 	.attr('transform', 'translate('+g['sidesleft']+','+g['sidestop']+')');
 
 sides.append('rect')
@@ -256,9 +252,10 @@ helptext.append('text')
 	.attr('y', 0);
 ClearHelpText();
 
-var viewsmenus = {};
-viewsmenus['Y'] = BuildViewsMenu('Y');
-viewsmenus['X'] = BuildViewsMenu('X');
+var viewmenus = {};
+var viewmenuContainer = body.append('div').attr('id', 'viewmenu-container');
+viewmenus['Y'] = BuildViewMenu('Y');
+viewmenus['X'] = BuildViewMenu('X');
 
 BuildAdditionalText();
 
@@ -349,7 +346,6 @@ function InitializePage() {
 				d3.select(node_this).datum().fixed = true;
 				LoadReferences(node_this);
 				g['introfinished'] = true;
-				d3.selectAll('.splash').remove();
 				TransitionVamp(g['duration']).each('end', function() {
 					d3.select(node_this).datum().fixed = false;
 					// force.stop();
@@ -701,9 +697,9 @@ function BuildScaleCollection(scalename, domainmin, domainmax, XorY) {
 function Vamp(durationvamp) {
 	// only update vamptime if necessary
 	if (durationvamp>g['vamptime']) {
-		d3.select('body').style('cursor', 'wait', 'important');
-		viewsmenus['Y'][0][0].disabled = true;
-		viewsmenus['X'][0][0].disabled = true;
+		body.style('cursor', 'wait', 'important');
+		viewmenus['Y'][0][0].disabled = true;
+		viewmenus['X'][0][0].disabled = true;
 		d3.select('.vamprect').attr('fill', '#b31b1b');
 		g['vamptime'] = durationvamp;
 		vampclock
@@ -718,11 +714,11 @@ function Vamp(durationvamp) {
 					};
 				})
 				.each('end', function() {
-					viewsmenus['Y'][0][0].disabled = false;
-					viewsmenus['X'][0][0].disabled = false;
+					viewmenus['Y'][0][0].disabled = false;
+					viewmenus['X'][0][0].disabled = false;
 					d3.select('.vamprect').attr('fill', 'green');
 					g['vamptime'] = 0;
-					d3.select('body').style('cursor', 'default', 'important');
+					body.style('cursor', 'default', 'important');
 				});
 	}
 }
@@ -805,7 +801,7 @@ function GenerateScales(XorY) {
 	}
 }
 
-function BuildViewsMenu(XorY) {
+function BuildViewMenu(XorY) {
 	// DROPDOWN
 	var newmenu, tempwidth, templeft, temptop, temptransform, tempwebkittransformorigin, temptext;
 	templeft = g['sidesleft']+LayoutX(-0.175);
@@ -816,34 +812,18 @@ function BuildViewsMenu(XorY) {
 	if (XorY==='X') {
 		temptop = (1)*g['sidestop']+LayoutY(g['hnum']-10.1);
 	}
-	newmenu = d3.selectAll('body')
+	newmenu = viewmenuContainer
 		.append('select')
-			.style('position', 'absolute')
-			.style('dominant-baseline', 'center')
+			.classed('viewmenu', true)
+			.style('height', g['font-size'] + 2*g['iconpad'] + 'px')
 			.style('left', templeft + 'px')
 			.style('top', temptop + 'px')
-			.style('width', tempwidth + 'px')
-			.style('height', g['font-size'] + 2*g['iconpad'] + 'px')
-			.style('border', 0)
-			.style('padding', 0)
-			.style('margin-left', 0)
-			.style('margin-right', 0)
-			.style('margin-top', 0)
-			.style('margin-bottom', 0)
-			.style('font-size', g['font-size']+'px')
-			.style('color', 'black')
-			.style('background-color', 'white');
+			.style('width', tempwidth + 'px');
 	for (var i=0; i<viewoptions.length; i++) {
 		newmenu
 			.append('option')
-				.classed(XorY+'dropoptions', true)
+				.classed(XorY+'dropoption', true)
 				.classed(viewoptions[i]['option'], true)
-				.style('border', 0)
-				.style('padding', 0)
-				.style('margin-left', 0)
-				.style('margin-right', 0)
-				.style('margin-top', 0)
-				.style('margin-bottom', 0)
 				.attr('value', viewoptions[i]['option'])
 				.text(viewoptions[i]['display']);
 	}
@@ -868,8 +848,8 @@ function UpdateDropDown(XorY, view, changed) {
 	}
 	if (changed!=='alreadychanged') {
 		//~
-		d3.selectAll('.'+XorY+'dropoptions').attr('selected', false);
-		d3.select('.'+XorY+'dropoptions.'+view).attr('selected', true);
+		d3.selectAll('.'+XorY+'dropoption').attr('selected', false);
+		d3.select('.'+XorY+'dropoption.'+view).attr('selected', true);
 	}
 }
 
@@ -924,7 +904,7 @@ function RandomizeForceParameters() {
 		'gravity'
 	];
 	var min, max, randomvalue, property, divindex, value;
-	d3.selectAll('.forcedebugsliders')
+	d3.selectAll('.forcedebugslider')
 		.each(function() {
 			property = d3.select(this).attr('property');
 			// property is a force attribute
@@ -965,7 +945,7 @@ function BuildDebugSlider(divindex, property, property_min, property_max) {
 		.text(property_min);
 	
 	forcedebugdivs[divindex].append('input')
-		.classed('forcedebugsliders', true)
+		.classed('forcedebugslider', true)
 		.style('width', width4+'px')
 		.attr('type', 'range')
 		.attr('property', property)
@@ -2731,7 +2711,7 @@ function DebugAnimation() {
 function DebugForce() {
 	var i;
 	var tempy = 0;
-	var forcedebugContainer = d3.select('body').append('div').attr('id', 'forcedebug-container');
+	var forcedebugContainer = body.append('div').attr('id', 'forcedebug-container');
 	for (i=0; i<9; i++) {
 		tempy = 2 + (i+2)*(4+g['font-size']);
 		forcedebugdivs[i] = forcedebugContainer.append('div')
@@ -3037,7 +3017,7 @@ function TransformView(XorY, viewchange) {
 }
 
 function BuildAdditionalText() {
-	var creditsDiv = d3.select('body').append('div')
+	var creditsDiv = body.append('div')
 		.attr('id', 'credits-container');
 	var textData = [
 		{
@@ -3611,8 +3591,8 @@ function UnitTestPerspective(XorY, sort, view) {
 	g[XorY+'sortnew'] = sort;
 	g[XorY+'viewnew'] = view;
 	UpdateButton(XorY, sort);
-	d3.selectAll('.'+XorY+'dropoptions').attr('selected', false);
-	d3.select('.'+XorY+'dropoptions.'+view).attr('selected', true);
+	d3.selectAll('.'+XorY+'dropoption').attr('selected', false);
+	d3.select('.'+XorY+'dropoption.'+view).attr('selected', true);
 	ApplyViewOption(g[XorY+'viewnew'], XorY);
 	TransformView(XorY);
 }
@@ -3629,8 +3609,8 @@ function UnitTests(unittest) {
 		// 	g['Ysortnew'] = 'decr';
 		// 	g['Yviewnew'] = 'index';
 		// 	UpdateButton('Y', 'decr');
-		// 	d3.selectAll('.Ydropoptions').attr('selected', false);
-		// 	d3.select('.Ydropoptions.index').attr('selected', true);
+		// 	d3.selectAll('.Ydropoption').attr('selected', false);
+		// 	d3.select('.Ydropoption.index').attr('selected', true);
 		// 	ApplyViewOption(g['Yviewnew'], 'Y');
 		// 	TransformView('Y');
 		// 	break;
@@ -3638,8 +3618,8 @@ function UnitTests(unittest) {
 		// 	g['Xsortnew'] = 'incr';
 		// 	g['Xviewnew'] = 'index';
 		// 	UpdateButton('X', 'incr');
-		// 	d3.selectAll('.Xdropoptions').attr('selected', false);
-		// 	d3.select('.Xdropoptions.index').attr('selected', true);
+		// 	d3.selectAll('.Xdropoption').attr('selected', false);
+		// 	d3.select('.Xdropoption.index').attr('selected', true);
 		// 	ApplyViewOption(g['Xviewnew'], 'X');
 		// 	TransformView('X');
 		// 	break;

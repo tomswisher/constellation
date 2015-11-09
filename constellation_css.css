@@ -10,13 +10,13 @@ div#credits-container div.credits-row {
   text-align: center;
 }
 div#credits-container div.credits-row.medium {
-  height: 22px;
+  height: 30px;
 }
 div#credits-container div.credits-row.medium a.credits-text {
   font-size: 18px;
 }
 div#credits-container div.credits-row.large {
-  height: 40px;
+  height: 60px;
 }
 div#credits-container div.credits-row.large a.credits-text {
   font-size: 36px;
@@ -66,13 +66,20 @@ div#forcedebug-container label.forcedebuglabel {
   font-family: Arial;
   font-size: 18px;
 }
-text {
+div#forcedebug-container input.forcedebugslider {
+  font-size: 12px;
+  box-sizing: border-box;
+}
+g#sides-container text {
   font-size: 18px;
   font-family: Arial;
 }
-input {
-  font-size: 12px;
-  box-sizing: border-box;
+div#viewmenu-container select.viewmenu {
+  font-size: 18px;
+  position: absolute;
+  border: 0;
+  color: black;
+  background-color: white;
 }
 .notselected {
   fill: white;
@@ -211,33 +218,6 @@ input {
   pointer-events: none;
   fill: white;
   opacity: 1;
-}
-.splash {
-  opacity: 0;
-}
-.splashbg {
-  fill: white;
-  opacity: 1;
-}
-.splashtext {
-  pointer-events: none;
-  dominant-baseline: central;
-  text-anchor: start;
-  font-size: 29px;
-  font-family: Arial;
-  opacity: 1;
-  fill: #0783B6;
-}
-.splashclick {
-  fill: white;
-  opacity: 0;
-  cursor: wait;
-}
-.splashrects {
-  fill-opacity: 0;
-  stroke-opacity: 1;
-  stroke: #0783B6;
-  stroke-width: 2px;
 }
 .helptext {
   pointer-events: none;
