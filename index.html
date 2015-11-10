@@ -355,7 +355,6 @@ function InitializePage() {
 }
 
 function Refresh() {
-	var i;
 	// ENTER NODES
 	nodes = stage.selectAll('.nodes')
 		.data(force.nodes(), function(d) { 
@@ -414,17 +413,16 @@ function Refresh() {
 				// .delay(g['durationlink'])
 				.attr('opacity', 1);
 
-	var newnodearray = [];
+	var newnodearray = [], i, j, new_datum;
 	for (i=0; i<nodesenterg[0].length; i++) {
 		if (nodesenterg[0][i]!==null) {
 			newnodearray.push(nodesenterg[0][i]);
 		}
 	}
 	for (i=0; i<newnodearray.length; i++) {
-		for (var j=0; j<menuoptions.length; j++) {
+		for (j=0; j<menuoptions.length; j++) {
 			// copy the datum by value, not by reference
-			var new_datum = d3.select(newnodearray[i]).datum();
-			new_datum = CopyByValue(new_datum);
+			new_datum = $.extend({}, d3.select(newnodearray[i]).datum());
 			// each arc gets an independent datum
 			d3.select(newnodearray[i]).insert('svg:path', 'circle')
 				.datum(new_datum)
@@ -1468,18 +1466,6 @@ function UpdateAdjacentElementsClass(node_this, option, bool) {
 function UpdateLinksClass(option, bool) {
 	links.selectAll('line')
 		.classed(option, bool);
-}
-
-function CopyByValue(oldobject) {
-	var copiedobject = [];
-	for (var i=0; i<oldobject.length; i++) {
-		var tempobject = {};
-		for (var key in oldobject[i]) {
-			tempobject[key] = oldobject[i][key];
-		}
-		copiedobject[i] = tempobject;			
-	}
-	return copiedobject;
 }
 
 function SelectNode(node_this) {
