@@ -1,0 +1,284 @@
+@references:  #68645b;
+@citing:      lightgray;
+@time:        darkorange;
+@selected:    #b31b1b;
+@notselected: white;
+@foreground:  black;
+@background:  white;
+
+@fontFamily: Helvetica;
+// @hide:       ;
+body {
+	background: @background;
+}
+div#credits-container {
+	position: absolute;
+	width: 200px;
+	height: auto;
+	top: 10px;
+	left: 10px;
+	div.credits-row {
+		display: block;
+		text-align: center;
+		&.medium {
+			height: 30px;
+			// line-height: 22px;
+			a.credits-text {
+				font-size: 18px
+			}
+		}
+		&.large {
+			height: 60px;
+			// line-height: 40px
+			a.credits-text {
+				font-size: 36px;
+				text-decoration: none;
+			}
+		}
+		a.credits-text {
+			font-family: @fontFamily;
+			color: @foreground;
+		}
+	}
+}
+div#examiner-container {
+	.examinerbg {
+		/*border-radius: 20px;*/
+		position: absolute;
+		pointer-events: none;
+		background-color: @background;
+		border: 1px solid;
+		border-color: @foreground;
+	}
+	.examinerdiv {
+		position: absolute;
+		pointer-events: none;
+	}
+	.examinertext1 {
+		position: absolute;
+		pointer-events: none;
+		font-family: @fontFamily;
+		font-size: 18px;
+		padding: 2px;
+		color: @foreground;
+		left: 4px;
+	}
+	.examinertext2 {
+		position: absolute;
+		pointer-events: none;
+		font-family: @fontFamily;
+		font-size: 18px;
+		padding: 2px;
+		color: @foreground;
+		left: 4px;
+	}
+}
+div#forcedebug-container {
+	min-width: 600px;
+	div.forcedebugdiv {
+		display: inline-block;
+		label.forcedebuglabel {
+			text-align: center;
+			display: inline-block;
+			font-family: @fontFamily;
+			font-size: 18px;
+			color: @foreground;
+		}
+		input.forcedebugslider {
+			font-size: 12px;
+			box-sizing: border-box;
+		}
+	}
+}
+g#sides-container {
+	text {
+		font-size: 18px;
+		font-family: @fontFamily;
+	}
+	.blitX, .blitY {
+		rect, text {
+			fill: @foreground;
+		}
+	}
+	.axesticks {
+		stroke: none;
+	}
+	.axesgridlines {
+		stroke: none;
+		fill: @foreground;
+	}
+	.axeslabels {
+		font-family: @fontFamily;
+		font-size: 18px;
+		text-anchor: middle;
+		dominant-baseline: central;
+	}
+	.axesbars {
+		fill: @background;
+		stroke: gainsboro;
+		stroke-width: 2px;
+		cursor: move; /* fallback if grab cursor is unsupported */
+		cursor: grab;
+		cursor: -moz-grab;
+		cursor: -webkit-grab;
+	}
+	.axesbars:active {
+		cursor: grabbing;
+		cursor: -moz-grabbing;
+		cursor: -webkit-grabbing;
+	}
+	.axisbar {
+		fill: @foreground;
+	}
+}
+div#viewmenu-container {
+	select.viewmenu {
+		font-size: 18px;
+		position: absolute;
+		border: 0;
+		color: @foreground;
+		background-color: @background;
+	}	
+}
+.notselected {
+	fill: @notselected;
+}
+.selected {
+	fill: @selected !important;
+}
+.time {
+	fill: @time !important;
+}
+.references {
+	fill: @references !important;
+}
+.citing {
+	fill: @citing !important;
+}
+// .hide {
+// 	fill: @hide;
+// }
+.linklines {
+	pointer-events: none;
+	stroke: gainsboro;
+	stroke-width: 2px;
+}
+.linklines.references {
+	pointer-events: none;
+	stroke: @references;
+	stroke-width: 3px;
+}
+.linklines.citing {
+	pointer-events: none;
+	stroke: @citing;
+	stroke-width: 3px;
+}
+// .linklines.hide {
+// 	pointer-events: none;
+// 	stroke: @hide;
+// 	stroke-width: 3px;
+// }
+.nodecircles {
+	cursor: pointer;
+	stroke: @foreground;
+	stroke-width: 2px;
+}
+.menus {
+	stroke: @foreground;
+	stroke-width: 2px;
+	cursor: pointer;
+}
+.planes {
+	cursor: pointer;
+	stroke: none;
+}
+.planeborder {
+	fill: @foreground;
+}
+.iconbase {
+	cursor: pointer;
+	fill: @background;
+	stroke: @foreground;
+	stroke-width: 2px;
+}
+.symbol {
+	cursor: pointer;
+	fill: @foreground;
+	stroke: @foreground;
+	stroke-width: 2px
+}
+.symbol.inverted {
+	fill: @background;
+}
+.arxivtext {
+	cursor: pointer;
+	text-anchor: start;
+	font-size: 18px;
+	dominant-baseline: central;
+	font-family: @fontFamily;
+	text-decoration: underline;
+	fill: -webkit-link;
+	// fill: @foreground;
+}
+.blanked {
+	fill: #68645b;
+	stroke: none;
+}
+.stagebg {
+	fill: @background;
+	cursor: move; /* fallback if grab cursor is unsupported */
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+}
+.stagebg:active {
+	cursor: grabbing;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
+}
+.sidesbg {
+	fill: @background;
+}
+.collapsed {
+	stroke: @foreground;
+	stroke-width: 2px;
+	cursor: default;
+}
+.loading {
+	opacity: 1;
+}
+.loadingtext {
+	pointer-events: none;
+	dominant-baseline: central;
+	/*text-anchor: end;*/
+	font-size: 29px;
+	font-family: @fontFamily;
+	opacity: 1;
+	fill: @foreground;
+}
+.loadingrect {
+	pointer-events: none;
+	fill: @foreground;
+	opacity: 1;
+}
+.helptext {
+	pointer-events: none;
+	text-anchor: start;
+	dominant-baseline: central;
+	font-size: 18px;
+	font-family: @fontFamily;
+	// fill: #0783B6;
+	fill: @foreground;
+}
+.vampclock {
+	pointer-events: none;
+	text-anchor: end;
+	dominant-baseline: central;
+	font-size: 29px;
+	font-family: @fontFamily;
+	fill: @foreground;
+}
+.vamprect {
+	pointer-events: none;
+	cursor: wait;
+}
