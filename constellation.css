@@ -141,18 +141,18 @@ div#viewmenu-container select.viewmenu {
 }
 .linklines {
   pointer-events: none;
-  stroke: gainsboro;
-  stroke-width: 2px;
+  stroke: black;
+  stroke-width: 1px;
 }
 .linklines.references {
   pointer-events: none;
   stroke: #68645b;
-  stroke-width: 3px;
+  stroke-width: 5px;
 }
 .linklines.citing {
   pointer-events: none;
   stroke: lightgray;
-  stroke-width: 3px;
+  stroke-width: 5px;
 }
 .nodecircles {
   cursor: pointer;
@@ -198,6 +198,9 @@ div#viewmenu-container select.viewmenu {
 .blanked {
   fill: #68645b;
   stroke: none;
+}
+.understagebg {
+  fill: gainsboro;
 }
 .stagebg {
   fill: white;

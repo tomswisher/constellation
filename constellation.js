@@ -111,6 +111,13 @@ var stage = svg.append('g')
 	.attr('clip-path', 'url(#stageclipPath)')
 	.attr('transform', 'translate('+g['sidesleft']+','+g['sidestop']+')');
 
+// stage.append('rect')
+// 	.classed('understagebg', true)
+// 	.attr('x', 0)
+// 	.attr('y', 0)
+// 	.attr('width', (1)*g['stagewidth'])
+// 	.attr('height', (1)*g['stageheight']);
+
 stage.append('rect')
 	.classed('stagebg', true)
 	.attr('x', 0)
@@ -1974,6 +1981,7 @@ function TransformLinks(selection, tempease, XorY) {
 }
 
 function TransformNodes(selection, tempease, XorY) {
+	var bound = d3.select('rect.stagebg')[0][0].getBoundingClientRect();
 	selection
 		.each(function(d) {
 	    	d.newx = d.x*g['Xzoom'];
@@ -1991,10 +1999,14 @@ function TransformNodes(selection, tempease, XorY) {
 	      		d.newx = scales[g['Xviewnew']]['X']['decr'](d[g['Xviewnew']]);
 			}
 			// stay withing bounds
-			if (showXAxis === false) {
-				d.newx = Math.max(d.newx, 0);
-				d.newx = Math.min(d.newx, g['stagewidth']);
-			}
+			// if (showXAxis === false) {
+				// d.newx = Math.max(d.newx, (-0.5)*g['stagewidth']);
+				// d.newx = Math.min(d.newx, (1.5)*g['stagewidth']);
+			// }
+			// if (showYAxis === false) {
+				// d.newy = Math.max(d.newy, (-0.5)*g['stageheight']);
+				// d.newy = Math.min(d.newy, (1.5)*g['stageheight']);
+			// }
 		});
 	if (tempease==='instant') {
 		selection
@@ -2834,11 +2846,11 @@ function MouseWheel(XorY, passedevent) {
 			browserdelta = 1*browserconstant*browserfactor + browserdelta;
 		}
 		var zoomdelta = browsersign*browserfactor*browserdelta/4000.0;
-		if (g[XorY+'zoom']+zoomdelta<=0.5) {
-			g[XorY+'zoom'] = 0.5;
+		if (g[XorY+'zoom']+zoomdelta<=1) {
+			g[XorY+'zoom'] = 1;
 		}
-		else if (g[XorY+'zoom']+zoomdelta>=4) {
-			g[XorY+'zoom'] = 4;
+		else if (g[XorY+'zoom']+zoomdelta>=2) {
+			g[XorY+'zoom'] = 2;
 		}
 		else {
 			g[XorY+'zoom'] += zoomdelta;
@@ -2898,33 +2910,34 @@ function GetNodeValue(value) {
 
 function DragStage(dragx, dragy) {
 	if (g['vamptime']===0) {
-		if (showXAxis === true) {
-			// var testx = g['stagerootx'] + dragx;
-			g['stagerootx'] += dragx;
-			g['Xrootx'] += dragx;
-			// console.log(g['stageroot'], g['Xroot'], g['Yroot']);
-			// if (testx>(0)*g['stagewidth']*g['Xzoom'] && testx<(1)*g['stagewidth']*g['Xzoom']) {
-			// 	g['stagerootx'] += dragx;
-			// 	g['Xrootx'] += dragx;
-			// }
-			d3.select('.stagerootx')
-				.attr('transform', 'translate('+g['stagerootx']+',0)');
-			d3.selectAll('.Xrooty')
-				.attr('transform', 'translate('+g['Xrootx']+',0)');
+		var dx, dy;
+
+		var newx = g['stagerootx'] + dragx;
+		if (newx < (-0.5)*g['stagewidth']) {
+			newx = (-0.5)*g['stagewidth'];
+		} else if (newx > (0.5)*g['stagewidth']) {
+			newx = 0.5*g['stagewidth'];
 		}
-		if (showYAxis === true) {
-			// var testy = g['stagerooty'] + dragy;
-			g['stagerooty'] += dragy;
-			g['Yrooty'] += dragy;
-			// if (testy>(0)*g['stageheight']*g['Yzoom'] && testy<(1)*g['stageheight']*g['Yzoom']) {
-			// 	g['stagerooty'] += dragy;
-			// 	g['Yrooty'] += dragy;
-			// }
-			d3.select('.stagerooty')
-				.attr('transform', 'translate(0,'+g['stagerooty']+')');
-			d3.selectAll('.Yrooty')
-				.attr('transform', 'translate(0,'+g['Yrooty']+')');
-		}
+		g['stagerootx'] = newx;
+		g['Xrootx'] = g['stagerootx'];
+		d3.select('.stagerootx')
+			.attr('transform', 'translate('+g['stagerootx']+',0)');
+		d3.selectAll('.Xrooty')
+			.attr('transform', 'translate('+g['Xrootx']+',0)');
+
+		var newy = g['stagerooty'] + dragy;
+		// if (newy < (-0.5)*g['stageheight']) {
+		// 	newy = (-0.5)*g['stageheight'];
+		// } else if (newy > (0.5)*g['stageheight']) {
+		// 	newy = 0.5*g['stageheight'];
+		// }
+		g['stagerooty'] = newy;
+		g['Yrooty'] = g['stagerooty'];
+		d3.select('.stagerooty')
+			.attr('transform', 'translate(0,'+g['stagerooty']+')');
+		d3.selectAll('.Yrooty')
+			.attr('transform', 'translate(0,'+g['Yrooty']+')');
+
 		// force.start();
 		if (g['node_this']!==false) {
 			BuildExaminerDiv(g['node_this']);
@@ -3488,7 +3501,7 @@ function InitializeG() {
 	// g['easelinkout']     = 'cubic-out';
 
 	// FORCE
-	g['linkDistance'] = 100;
+	g['linkDistance'] = 120;
 	g['charge'] = -1000;
 	g['gravity'] = 0.1;
 	g['linkStrength'] = 0.9;
@@ -3511,8 +3524,8 @@ function InitializeG() {
 	g['unitsquare'] = g['svgheight']/g['hnum'];
 	g['svgwidth'] = 0;
 	g['wnum'] = 0;
-	while (g['svgwidth'] < 1260) {
-	// while (g['svgwidth'] < 1000) {
+	// while (g['svgwidth'] < 1260) {
+	while (g['svgwidth'] < 1200) {
 		g['wnum'] += 1;
 		g['svgwidth'] = g['wnum'] * g['unitsquare'];
 	}
@@ -3602,7 +3615,7 @@ function InitializeG() {
 	g['node_this'] = false;
 	g['node_d'] = false;
 
-	g['node_r'] = 11;
+	g['node_r'] = 13;
 	g['font-size'] = 18;
 
 	g['planeopacitymax'] = 0.8;
