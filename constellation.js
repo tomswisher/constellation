@@ -1,3 +1,5 @@
+// Written in 2014 by Tom Swisher
+
 'use strict';
 
 var g = InitializeG();
@@ -3098,15 +3100,20 @@ function BuildAdditionalText() {
 			size: 'large'
 		},
 		{
-			text: 'github.com/tomswisher',
-			href: 'https://github.com/tomswisher/',
-			size: 'medium'
+			text: 'arxiv.org explorer',
+			href: false,
+			size: 'medium',
 		},
-		{
-			text: 'bl.ocks.org/tomswisher',
-			href: 'http://bl.ocks.org/tomswisher',
-			size: 'medium'
-		}
+		// {
+		// 	text: 'github.com/tomswisher',
+		// 	href: 'https://github.com/tomswisher/',
+		// 	size: 'medium'
+		// },
+		// {
+		// 	text: 'bl.ocks.org/tomswisher',
+		// 	href: 'http://bl.ocks.org/tomswisher',
+		// 	size: 'medium'
+		// },
 	];
 	creditsDiv.selectAll('a.credits-text').data(textData).enter()
 		.append('div').classed('credits-row', true)
