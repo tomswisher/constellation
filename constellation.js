@@ -1,4 +1,4 @@
-// Written in 2014 by Tom Swisher
+// 2014 Tom Swisher
 
 'use strict';
 
